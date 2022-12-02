@@ -10,7 +10,7 @@ const {
 } = process.env;
 
 const BASE_API_URL = "https://api.spotify.com/v1";
-const MY_PLAYLISTS_URI = 'me/playlists';
+const MY_PLAYLISTS_URI = '/me/playlists';
 
 const LS_KEYS = {
   ACCESS_TOKEN: "SPOTIFY_ACCESS_TOKEN",
@@ -42,7 +42,7 @@ const useProvideSpotify = () => {
 
   const history = useHistory();
 
-  const callEndpoint = async ({ path, method = "GET" }) => {
+  const callEndpoint = async ({ path, method }) => {
     if (hasTokenExpired()) {
       invalidateToken();
 
@@ -58,6 +58,22 @@ const useProvideSpotify = () => {
       })
     ).json();
   };
+
+  const fetchAllSongs = async () => {
+    const playlists = await callEndpoint({path: MY_PLAYLISTS_URI});
+    playlists.items.forEach(async playlist => {
+      const songs = await fetchSongsFromPlaylist({playlist_id: playlist.id});
+      songs.items.forEach(song => {
+        if (song !== null && song.track !== null) {
+          console.log(song.track.name);
+        }
+    });
+    })
+  }
+
+  const fetchSongsFromPlaylist = async ({ playlist_id }) => {
+    return await callEndpoint({ path: `/playlists/${playlist_id}/tracks`})
+  }
 
   const fetchCurrentUserInfo = async () => {
     return await callEndpoint({ path: "/me", token });
@@ -236,5 +252,6 @@ const useProvideSpotify = () => {
     storeTokenAtRedirect,
     fetchCurrentUserInfo,
     fetchSearchResults,
+    fetchAllSongs,
   };
 };

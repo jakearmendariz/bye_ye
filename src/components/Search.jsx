@@ -6,7 +6,8 @@ const Search = () => {
 
   const inputRef = useRef(null);
 
-  const { fetchSearchResults } = useSpotify();
+  const { fetchSearchResults, fetchAllSongs } = useSpotify();
+  fetchAllSongs();
 
   const handleOnSubmit = async (evt) => {
     evt.preventDefault();
