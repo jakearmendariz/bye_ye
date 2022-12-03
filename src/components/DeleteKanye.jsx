@@ -2,45 +2,60 @@ import { useRef, useState } from 'react';
 import { useSpotify } from '../hooks/useSpotify';
 
 const DeleteKanye = () => {
-  const MY_PLAYLISTS_URI = '/me/playlists';
-
   const [songsDeleted, setSongsDeleted] = useState(0);
-
+  const [isComplete, setComplete] = useState(false);
   const { user, callEndpoint, callEndpointWithBody } = useSpotify();
 
+  const incrementSongsComplete = (inc) => {
+    setSongsDeleted(songsDeleted + inc);
+  }
+
   const deleteKanyeSongs = async () => {
-    const playlists = await callEndpoint({ path: MY_PLAYLISTS_URI });
+    let playlists;
     let counter = 0;
-    playlists.items.forEach(async (playlist) => {
-      if (playlist.owner.id != user.id) {
-        return;
-      }
-      const songs = await fetchSongsFromPlaylist({ playlist_id: playlist.id });
-      // console.log()
-      let songPosition = 0;
-      let songsToDelete = [];
+    let playlistOffset = 0;
+    do {
+      playlists = await fetchPlaylist(playlistOffset);
+      playlists.items.forEach(async (playlist) => {
+        if (playlist.owner.id != user.id) {
+          return;
+        }
+        counter += await deleteSongsFromPlaylist(playlist)
+      });
+      playlistOffset += 10;
+    } while (playlists.items.length > 0);
+    setComplete(true);
+    return counter;
+  };
+
+  const deleteSongsFromPlaylist = async (playlist) => {
+    let totalSongs = playlist.tracks.total;
+    let songsToDelete = [];
+    let songOffset = 0;
+    let counter = 0;
+    for (let i = 0; i < totalSongs / 100 + 1; i++) {
+      const songs = await fetchSongsFromPlaylist({
+        playlist_id: playlist.id,
+        songOffset
+      });
       songs.items.forEach((song) => {
         if (song !== null && song.track !== null) {
-          // console.log(song);
           if (song.track.artists.some(isKanye)) {
-            const songObj = extractSongInfo(song, songPosition);
+            const songObj = extractSongInfo(song);
             console.log('kanye song detected ', song.track, playlist);
             songsToDelete.push(songObj);
+            counter += 1;
           }
-          counter += 1;
         }
-        songPosition += 1;
         if (songsToDelete.length > 0) {
           fetchDeleteSong({ playlist_id: playlist.id, songsToDelete });
-          songsToDelete = []
+          songsToDelete = [];
         }
       });
-    });
-    // console.log(`Kanye songs in ${playlist.name}`)
-    // console.log(songsToDelete)
-    // songsToDelete.forEach((song) => console.log(song));
-    // await fetchDeleteSong(songsToDelete)
-
+      songOffset += 100;
+    }
+    console.log(counter)
+    incrementSongsComplete(counter);
     return counter;
   };
 
@@ -48,9 +63,9 @@ const DeleteKanye = () => {
     return artist.name == 'Kanye West';
   };
 
-  const extractSongInfo = (song, position) => {
+  const extractSongInfo = (song) => {
     return {
-      'uri': song.track.uri
+      uri: song.track.uri
       // 'positions': [position]
     };
   };
@@ -64,9 +79,18 @@ const DeleteKanye = () => {
     });
   };
 
-  const fetchSongsFromPlaylist = async ({ playlist_id }) => {
-    return await callEndpoint({ path: `/playlists/${playlist_id}/tracks` });
+  const fetchSongsFromPlaylist = async ({ playlist_id, songOffset }) => {
+    // https://api.spotify.com/v1/playlists/5IGMBRvW60usILlePZNdJD/tracks?limit=1000
+    return await callEndpoint({
+      path: `/playlists/${playlist_id}/tracks?limit=100&offset=${songOffset}`
+    });
   };
+
+  const fetchPlaylist = async (offset) => {
+    return await callEndpoint({
+      path: `/me/playlists?limit=10&offset=${offset}`
+    });
+  }
 
   const handleOnSubmit = async (evt) => {
     evt.preventDefault();
@@ -74,7 +98,7 @@ const DeleteKanye = () => {
     try {
       const counter = await deleteKanyeSongs();
       console.log(counter);
-      setSongsDeleted(counter);
+      // setSongsDeleted(counter);
     } catch (err) {
       console.error(err);
     }
@@ -83,7 +107,7 @@ const DeleteKanye = () => {
   return (
     <div>
       <div>
-        {songsDeleted > 0 ? (
+        {isComplete ? (
           <div>
             <h3>Songs Deleted!</h3>
             <p>{songsDeleted}</p>

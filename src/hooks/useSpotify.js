@@ -41,7 +41,11 @@ const useProvideSpotify = () => {
 
   const history = useHistory();
 
-  const callEndpoint = async ({ path, method = 'GET' }) => {
+  const HEADERS = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  const callEndpoint = async ({ path, method = 'GET', headers = HEADERS }) => {
     if (hasTokenExpired()) {
       invalidateToken();
 
@@ -50,9 +54,7 @@ const useProvideSpotify = () => {
 
     return await (
       await fetch(`${BASE_API_URL}${path}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: HEADERS,
         method,
       })
     ).json();
@@ -244,5 +246,6 @@ const useProvideSpotify = () => {
     fetchCurrentUserInfo,
     callEndpoint,
     callEndpointWithBody,
+    HEADERS,
   };
 };
