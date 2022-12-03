@@ -28,7 +28,8 @@ export default function App() {
               {hasLoggedIn ? (
                 <>
                   <h3>Welcome {user.display_name}</h3>
-                  <button onClick={logout}>Logout</button>
+                  {/* <button onClick={logout}>Logout</button> */}
+                  <h3 id="value" style={{visibility:'hidden'}}>0</h3>
                   <DeleteKanye />
                 </>
               ) : (

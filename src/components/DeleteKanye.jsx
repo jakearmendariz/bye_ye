@@ -2,13 +2,9 @@ import { useRef, useState } from 'react';
 import { useSpotify } from '../hooks/useSpotify';
 
 const DeleteKanye = () => {
-  const [songsDeleted, setSongsDeleted] = useState(0);
+  let kanyeCounter = 0;
   const [isComplete, setComplete] = useState(false);
   const { user, callEndpoint, callEndpointWithBody } = useSpotify();
-
-  const incrementSongsComplete = (inc) => {
-    setSongsDeleted(songsDeleted + inc);
-  }
 
   const deleteKanyeSongs = async () => {
     let playlists;
@@ -20,11 +16,12 @@ const DeleteKanye = () => {
         if (playlist.owner.id != user.id) {
           return;
         }
-        counter += await deleteSongsFromPlaylist(playlist)
+        const value = await deleteSongsFromPlaylist(playlist)
+        counter += value;
       });
       playlistOffset += 10;
-    } while (playlists.items.length > 0);
-    setComplete(true);
+    } while (playlists.items.length == 10);
+
     return counter;
   };
 
@@ -42,9 +39,10 @@ const DeleteKanye = () => {
         if (song !== null && song.track !== null) {
           if (song.track.artists.some(isKanye)) {
             const songObj = extractSongInfo(song);
-            console.log('kanye song detected ', song.track, playlist);
+            console.log(playlist.name, 'kanye song detected ', song.track);
             songsToDelete.push(songObj);
             counter += 1;
+            kanyeCounter += 1;
           }
         }
         if (songsToDelete.length > 0) {
@@ -54,8 +52,8 @@ const DeleteKanye = () => {
       });
       songOffset += 100;
     }
-    console.log(counter)
-    incrementSongsComplete(counter);
+    const currentCount = parseInt(document.getElementById("value").innerHTML);
+    document.getElementById("value").innerHTML = '' + (currentCount + counter );
     return counter;
   };
 
@@ -66,7 +64,6 @@ const DeleteKanye = () => {
   const extractSongInfo = (song) => {
     return {
       uri: song.track.uri
-      // 'positions': [position]
     };
   };
 
@@ -93,12 +90,12 @@ const DeleteKanye = () => {
   }
 
   const handleOnSubmit = async (evt) => {
+    document.getElementById("value").style.visibility = 'visible';
     evt.preventDefault();
 
     try {
-      const counter = await deleteKanyeSongs();
-      console.log(counter);
-      // setSongsDeleted(counter);
+      await deleteKanyeSongs()
+      setComplete(true);
     } catch (err) {
       console.error(err);
     }
@@ -110,7 +107,6 @@ const DeleteKanye = () => {
         {isComplete ? (
           <div>
             <h3>Songs Deleted!</h3>
-            <p>{songsDeleted}</p>
           </div>
         ) : (
           <form>
