@@ -41,7 +41,7 @@ const useProvideSpotify = () => {
 
   const history = useHistory();
 
-  const callEndpoint = async ({ path, method }) => {
+  const callEndpoint = async ({ path, method = 'GET' }) => {
     if (hasTokenExpired()) {
       invalidateToken();
 
@@ -57,6 +57,23 @@ const useProvideSpotify = () => {
       })
     ).json();
   };
+
+  const callEndpointWithBody = async ({ path, body, method }) => {
+    if (hasTokenExpired()) {
+      invalidateToken();
+
+      throw new Error("Token has expired.");
+    }
+    return await (
+      await fetch(`${BASE_API_URL}${path}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        method,
+        body,
+      })
+    ).json();
+  }
 
   const fetchSongsFromPlaylist = async ({ playlist_id }) => {
     return await callEndpoint({ path: `/playlists/${playlist_id}/tracks`})
@@ -226,5 +243,6 @@ const useProvideSpotify = () => {
     storeTokenAtRedirect,
     fetchCurrentUserInfo,
     callEndpoint,
+    callEndpointWithBody,
   };
 };

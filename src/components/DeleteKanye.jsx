@@ -6,46 +6,63 @@ const DeleteKanye = () => {
 
   const [songsDeleted, setSongsDeleted] = useState(0);
 
-  const { callEndpoint } = useSpotify();
+  const { user, callEndpoint, callEndpointWithBody } = useSpotify();
 
   const deleteKanyeSongs = async () => {
     const playlists = await callEndpoint({ path: MY_PLAYLISTS_URI });
     let counter = 0;
-    let songsToDelete = []
     playlists.items.forEach(async (playlist) => {
+      if (playlist.owner.id != user.id) {
+        return;
+      }
       const songs = await fetchSongsFromPlaylist({ playlist_id: playlist.id });
       // console.log()
       let songPosition = 0;
+      let songsToDelete = [];
       songs.items.forEach((song) => {
         if (song !== null && song.track !== null) {
           // console.log(song);
           if (song.track.artists.some(isKanye)) {
             const songObj = extractSongInfo(song, songPosition);
-            console.log('kanye song detected ', songObj)
+            console.log('kanye song detected ', song.track, playlist);
             songsToDelete.push(songObj);
           }
           counter += 1;
         }
         songPosition += 1;
+        if (songsToDelete.length > 0) {
+          fetchDeleteSong({ playlist_id: playlist.id, songsToDelete });
+          songsToDelete = []
+        }
       });
     });
     // console.log(`Kanye songs in ${playlist.name}`)
-    songsToDelete.forEach((song) => console.log(song));
+    // console.log(songsToDelete)
+    // songsToDelete.forEach((song) => console.log(song));
+    // await fetchDeleteSong(songsToDelete)
+
     return counter;
   };
 
   const isKanye = (artist) => {
-    return artist.name == "Kanye West";
-  }
+    return artist.name == 'Kanye West';
+  };
 
   const extractSongInfo = (song, position) => {
     return {
-      'track': song.track.uri,
-      'positions': [position]
-    }
-  }
+      'uri': song.track.uri
+      // 'positions': [position]
+    };
+  };
 
-  // fetchDeleteSong = async ({ song_id }) => 
+  const fetchDeleteSong = async ({ playlist_id, songsToDelete }) => {
+    const body = { tracks: songsToDelete };
+    return await callEndpointWithBody({
+      path: `/playlists/${playlist_id}/tracks`,
+      method: 'DELETE',
+      body: JSON.stringify(body)
+    });
+  };
 
   const fetchSongsFromPlaylist = async ({ playlist_id }) => {
     return await callEndpoint({ path: `/playlists/${playlist_id}/tracks` });
