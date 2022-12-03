@@ -10,7 +10,6 @@ const {
 } = process.env;
 
 const BASE_API_URL = "https://api.spotify.com/v1";
-const MY_PLAYLISTS_URI = '/me/playlists';
 
 const LS_KEYS = {
   ACCESS_TOKEN: "SPOTIFY_ACCESS_TOKEN",
@@ -59,18 +58,6 @@ const useProvideSpotify = () => {
     ).json();
   };
 
-  const fetchAllSongs = async () => {
-    const playlists = await callEndpoint({path: MY_PLAYLISTS_URI});
-    playlists.items.forEach(async playlist => {
-      const songs = await fetchSongsFromPlaylist({playlist_id: playlist.id});
-      songs.items.forEach(song => {
-        if (song !== null && song.track !== null) {
-          console.log(song.track.name);
-        }
-    });
-    })
-  }
-
   const fetchSongsFromPlaylist = async ({ playlist_id }) => {
     return await callEndpoint({ path: `/playlists/${playlist_id}/tracks`})
   }
@@ -79,19 +66,6 @@ const useProvideSpotify = () => {
     return await callEndpoint({ path: "/me", token });
   };
 
-  const fetchSearchResults = async ({
-    query,
-    type = "album,artist,playlist,track,show,episode",
-    limit = 20,
-  }) => {
-    const qs = buildQueryString({
-      q: query,
-      type,
-      limit,
-    });
-
-    return await callEndpoint({ path: `/search?${qs}`, token });
-  };
   //https://accounts.spotify.com/authorize?client_id=%225280473b299247c388bbf927ef1071a3%22;&redirect_uri=%22http%3A%2F%2Flocalhost%3A3000%2Fcallback%2F%22%3B&scope=%22user-read-private%20user-read-email%22%3B&response_type=token&state=KTrk90xxKVXU7w5u&show_dialog=true
   const login = () => {
     const popup = window.open(
@@ -251,7 +225,6 @@ const useProvideSpotify = () => {
     },
     storeTokenAtRedirect,
     fetchCurrentUserInfo,
-    fetchSearchResults,
-    fetchAllSongs,
+    callEndpoint,
   };
 };

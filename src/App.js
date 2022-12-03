@@ -1,5 +1,5 @@
 import { Switch, Route, Redirect, Link } from "react-router-dom";
-import Search from "./components/Search";
+import DeleteKanye from "./components/DeleteKanye";
 import ScrollToTop from "./components/ScrollToTop";
 import SpotifyRedirect from "./components/SpotifyRedirect";
 import { useSpotify } from "./hooks/useSpotify";
@@ -16,7 +16,7 @@ export default function App() {
 
   return (
     <>
-      <h1>Spotify App</h1>
+      <h1>Bye Ye</h1>
 
       <ScrollToTop />
       {isLoading ? (
@@ -29,7 +29,7 @@ export default function App() {
                 <>
                   <h3>Welcome {user.display_name}</h3>
                   <button onClick={logout}>Logout</button>
-                  <Link to="/search">Search</Link>
+                  <DeleteKanye />
                 </>
               ) : (
                 <button onClick={login}>Login</button>
@@ -55,8 +55,8 @@ export default function App() {
                 <Redirect to="/" />
               )}
             </Route>
-            <Route path="/search">
-              {hasLoggedIn ? <Search /> : <Redirect to="/" />}
+            <Route path="/bye">
+              {hasLoggedIn ? <DeleteKanye /> : <Redirect to="/" />}
             </Route>
           </Switch>
         </>
