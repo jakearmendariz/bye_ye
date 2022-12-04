@@ -1,9 +1,6 @@
 import { useRef, useState } from 'react';
 import { useSpotify } from '../hooks/useSpotify';
-// import * as firebase from 'firebase';
-// import firebase from "firebase/compat/app"
-// import "firebase/compat/auth"
-// import "firebase/compat/firestore"
+import Button from '@mui/material/Button';
 
 const DeleteKanye = () => {
   let kanyeCounter = 0;
@@ -96,6 +93,7 @@ const DeleteKanye = () => {
 
   const handleOnSubmit = async (evt) => {
     document.getElementById('value').style.visibility = 'visible';
+    document.getElementById('clickHereInstructions').innerHTML = "Kayne songs deleted";
     evt.preventDefault();
 
     try {
@@ -110,15 +108,18 @@ const DeleteKanye = () => {
     <div>
       <div>
         {isComplete ? (
-          <div>
-            <h3>Songs Deleted!</h3>
-          </div>
+          <></>
         ) : (
           <form>
-            <label>Delete all of your Kayne Songs:</label>
-            <button type="submit" onClick={handleOnSubmit}>
-              Booyah!
-            </button>
+            <Button
+              type="submit"
+              onClick={handleOnSubmit}
+              color="error"
+              variant="contained"
+              style={{ width: 100, height: 60 }}
+            >
+              Delete!
+            </Button>
           </form>
         )}
       </div>

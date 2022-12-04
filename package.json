@@ -2,12 +2,16 @@
   "name": "react",
   "version": "1.0.0",
   "description": "React example starter project",
+  "firebase": "^9.14.0",
   "keywords": [
     "react",
     "starter"
   ],
   "main": "src/index.js",
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.10.16",
     "firebase": "^9.14.0",
     "history": "^5.0.1",
     "react": "17.0.2",

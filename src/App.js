@@ -1,11 +1,10 @@
 import { Switch, Route, Redirect, Link } from "react-router-dom";
 import DeleteKanye from "./components/DeleteKanye";
-import ScrollToTop from "./components/ScrollToTop";
 import SpotifyRedirect from "./components/SpotifyRedirect";
 import { useSpotify } from "./hooks/useSpotify";
 import { useFirebase } from "./hooks/useFirebase";
 import { useEffect } from "react";
-
+import Button from '@mui/material/Button';
 
 export default function App() {
   const {
@@ -13,7 +12,6 @@ export default function App() {
     hasRedirectedFromValidPopup,
     isLoading,
     login,
-    logout,
     user,
   } = useSpotify();
 
@@ -32,10 +30,10 @@ export default function App() {
   })
 
   return (
-    <>
-      <h1>Bye Ye</h1>
+    <div id="body">
+      <h1>Delete Kanye!</h1>
+      <img style={{width:"10em", height:"10em"}} src="xface.png"></img>
 
-      <ScrollToTop />
       {isLoading ? (
         <p>Loading...</p>
       ) : (
@@ -44,13 +42,27 @@ export default function App() {
             <div>
               {hasLoggedIn ? (
                 <>
-                  <h3>Welcome {user.display_name}</h3>
-                  {/* <button onClick={logout}>Logout</button> */}
-                  <h3 id="value" style={{visibility:'hidden'}}>0</h3>
+                  <h3 id="clickHereInstructions">
+                    Click here to remove <b>all</b> Kanye songs from your <b>all</b> your
+                    spotify playlists.
+                  </h3>
+                  <h3 id="value" style={{ visibility: 'hidden' }}>
+                    0
+                  </h3>
                   <DeleteKanye />
                 </>
               ) : (
-                <button onClick={login}>Login</button>
+                <>
+                  <h3>
+                    Heard about all the antisemetic shit Kanye West has been saying, but
+                    your spotify is still littered with his music?<br></br>
+                    <br></br>
+                    Do the right thing, delete all of your Kanye songs!<br></br>
+                  </h3>
+                  <Button variant="contained" color="primary" onClick={login}>
+                    Login
+                  </Button>
+                </>
               )}
               Join the {totalUsers} users who have collectively deleted {totalDeletedSongs} Kanye songs off their playlists
             </div>
@@ -80,6 +92,6 @@ export default function App() {
           </Switch>
         </>
       )}
-    </>
+    </div>
   );
 }
