@@ -92,6 +92,7 @@ const DeleteKanye = () => {
 
   const handleOnSubmit = async (evt) => {
     document.getElementById('value').style.visibility = 'visible';
+    document.getElementById('clickHereInstructions').innerHTML = "Kayne songs deleted"
     evt.preventDefault();
 
     try {
@@ -106,19 +107,17 @@ const DeleteKanye = () => {
     <div>
       <div>
         {isComplete ? (
-          <div>
-            <h3>Songs Deleted!</h3>
-          </div>
+          <></>
         ) : (
           <form>
             <Button
               type="submit"
               onClick={handleOnSubmit}
-              color="secondary"
+              color="error"
               variant="contained"
-              style={{ width: 100, height: 60, backgroundColor: 'red', fontSize: '40px' }}
+              style={{ width: 100, height: 60 }}
             >
-              Booyah!
+              Delete!
             </Button>
           </form>
         )}
