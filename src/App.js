@@ -3,6 +3,9 @@ import DeleteKanye from "./components/DeleteKanye";
 import ScrollToTop from "./components/ScrollToTop";
 import SpotifyRedirect from "./components/SpotifyRedirect";
 import { useSpotify } from "./hooks/useSpotify";
+import { useFirebase } from "./hooks/useFirebase";
+import { useEffect } from "react";
+
 
 export default function App() {
   const {
@@ -13,6 +16,20 @@ export default function App() {
     logout,
     user,
   } = useSpotify();
+
+  const {
+    getTotalDeletesAndUsers
+  } = useFirebase();
+
+  const [totalDeletedSongs, setTotalDeletedSongs] = useState(0); 
+  const [totalUsers, setTotalUsers] = useState(0); 
+
+  useEffect(() => {
+    getTotalDeletesAndUsers().then((result) => {
+      setTotalDeletedSongs(result.deletes);
+      setTotalUsers(result.users);
+    }, []);
+  })
 
   return (
     <>
@@ -35,6 +52,7 @@ export default function App() {
               ) : (
                 <button onClick={login}>Login</button>
               )}
+              Join the {totalUsers} users who have collectively deleted {totalDeletedSongs} Kanye songs off their playlists
             </div>
           </Route>
 

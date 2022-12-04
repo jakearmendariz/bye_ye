@@ -1,10 +1,15 @@
 import { useRef, useState } from 'react';
 import { useSpotify } from '../hooks/useSpotify';
+// import * as firebase from 'firebase';
+// import firebase from "firebase/compat/app"
+// import "firebase/compat/auth"
+// import "firebase/compat/firestore"
 
 const DeleteKanye = () => {
   let kanyeCounter = 0;
   const [isComplete, setComplete] = useState(false);
   const { user, callEndpoint, callEndpointWithBody } = useSpotify();
+  // const { getTotalDeletesAndUsers } = useFirebase();
 
   const deleteKanyeSongs = async () => {
     let playlists;
@@ -16,7 +21,7 @@ const DeleteKanye = () => {
         if (playlist.owner.id != user.id) {
           return;
         }
-        const value = await deleteSongsFromPlaylist(playlist)
+        const value = await deleteSongsFromPlaylist(playlist);
         counter += value;
       });
       playlistOffset += 10;
@@ -52,8 +57,8 @@ const DeleteKanye = () => {
       });
       songOffset += 100;
     }
-    const currentCount = parseInt(document.getElementById("value").innerHTML);
-    document.getElementById("value").innerHTML = '' + (currentCount + counter );
+    const currentCount = parseInt(document.getElementById('value').innerHTML);
+    document.getElementById('value').innerHTML = '' + (currentCount + counter);
     return counter;
   };
 
@@ -87,14 +92,14 @@ const DeleteKanye = () => {
     return await callEndpoint({
       path: `/me/playlists?limit=10&offset=${offset}`
     });
-  }
+  };
 
   const handleOnSubmit = async (evt) => {
-    document.getElementById("value").style.visibility = 'visible';
+    document.getElementById('value').style.visibility = 'visible';
     evt.preventDefault();
 
     try {
-      await deleteKanyeSongs()
+      await deleteKanyeSongs();
       setComplete(true);
     } catch (err) {
       console.error(err);
