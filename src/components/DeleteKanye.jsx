@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { useSpotify } from '../hooks/useSpotify';
+import Button from '@mui/material/Button';
 
 const DeleteKanye = () => {
   let kanyeCounter = 0;
@@ -16,7 +17,7 @@ const DeleteKanye = () => {
         if (playlist.owner.id != user.id) {
           return;
         }
-        const value = await deleteSongsFromPlaylist(playlist)
+        const value = await deleteSongsFromPlaylist(playlist);
         counter += value;
       });
       playlistOffset += 10;
@@ -52,8 +53,8 @@ const DeleteKanye = () => {
       });
       songOffset += 100;
     }
-    const currentCount = parseInt(document.getElementById("value").innerHTML);
-    document.getElementById("value").innerHTML = '' + (currentCount + counter );
+    const currentCount = parseInt(document.getElementById('value').innerHTML);
+    document.getElementById('value').innerHTML = '' + (currentCount + counter);
     return counter;
   };
 
@@ -87,14 +88,14 @@ const DeleteKanye = () => {
     return await callEndpoint({
       path: `/me/playlists?limit=10&offset=${offset}`
     });
-  }
+  };
 
   const handleOnSubmit = async (evt) => {
-    document.getElementById("value").style.visibility = 'visible';
+    document.getElementById('value').style.visibility = 'visible';
     evt.preventDefault();
 
     try {
-      await deleteKanyeSongs()
+      await deleteKanyeSongs();
       setComplete(true);
     } catch (err) {
       console.error(err);
@@ -110,10 +111,15 @@ const DeleteKanye = () => {
           </div>
         ) : (
           <form>
-            <label>Delete all of your Kayne Songs:</label>
-            <button type="submit" onClick={handleOnSubmit}>
+            <Button
+              type="submit"
+              onClick={handleOnSubmit}
+              color="secondary"
+              variant="contained"
+              style={{ width: 100, height: 60, backgroundColor: 'red', fontSize: '40px' }}
+            >
               Booyah!
-            </button>
+            </Button>
           </form>
         )}
       </div>

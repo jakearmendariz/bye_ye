@@ -1,22 +1,20 @@
-import { Switch, Route, Redirect, Link } from "react-router-dom";
-import DeleteKanye from "./components/DeleteKanye";
-import ScrollToTop from "./components/ScrollToTop";
-import SpotifyRedirect from "./components/SpotifyRedirect";
-import { useSpotify } from "./hooks/useSpotify";
-
+import { Switch, Route, Redirect, Link } from 'react-router-dom';
+import DeleteKanye from './components/DeleteKanye';
+import ScrollToTop from './components/ScrollToTop';
+import SpotifyRedirect from './components/SpotifyRedirect';
+import { useSpotify } from './hooks/useSpotify';
 export default function App() {
-  const {
-    hasLoggedIn,
-    hasRedirectedFromValidPopup,
-    isLoading,
-    login,
-    logout,
-    user,
-  } = useSpotify();
+  const { hasLoggedIn, hasRedirectedFromValidPopup, isLoading, login, user } =
+    useSpotify();
 
   return (
-    <>
-      <h1>Bye Ye</h1>
+    <div id="body">
+      <h1>Delete Kanye!!!</h1>
+      <h3>
+        Heard about all the shit Kanye West has been saying, but your spotify is
+        still litered with his music<br></br>
+        Do the right thing, delete all of your Kanye Songs!<br></br>
+      </h3>
 
       <ScrollToTop />
       {isLoading ? (
@@ -28,8 +26,9 @@ export default function App() {
               {hasLoggedIn ? (
                 <>
                   <h3>Welcome {user.display_name}</h3>
-                  {/* <button onClick={logout}>Logout</button> */}
-                  <h3 id="value" style={{visibility:'hidden'}}>0</h3>
+                  <h3 id="value" style={{ visibility: 'hidden' }}>
+                    0
+                  </h3>
                   <DeleteKanye />
                 </>
               ) : (
@@ -62,6 +61,6 @@ export default function App() {
           </Switch>
         </>
       )}
-    </>
+    </div>
   );
 }
