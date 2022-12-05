@@ -1,12 +1,38 @@
 import { useRef, useState } from 'react';
 import { useSpotify } from '../hooks/useSpotify';
 import Button from '@mui/material/Button';
+import firebase from "firebase/compat/app"
+import "firebase/compat/auth"
+import "firebase/compat/firestore"
+
 
 const DeleteKanye = () => {
   let kanyeCounter = 0;
   const [isComplete, setComplete] = useState(false);
   const { user, callEndpoint, callEndpointWithBody } = useSpotify();
   // const { getTotalDeletesAndUsers } = useFirebase();
+
+  const {
+    REACT_APP_API_KEY,
+    REACT_APP_authDomain,
+    REACT_APP_databaseURL,
+    REACT_APP_projectId,
+    REACT_APP_storageBucket,
+    REACT_APP_messagingSenderId,
+    REACT_APP_appId,
+    REACT_APP_measurementId
+  } = process.env;
+  const FIREBASE_CONFIG = {
+    apiKey: REACT_APP_API_KEY,
+    authDomain: REACT_APP_authDomain,
+    databaseUrl: REACT_APP_databaseURL,
+    projectId: REACT_APP_projectId,
+    storageBucket: REACT_APP_storageBucket,
+    messagingSenderId: REACT_APP_messagingSenderId,
+    appId: REACT_APP_appId,
+    measurementId: REACT_APP_measurementId
+  };
+  var app = firebase.initializeApp(FIREBASE_CONFIG);
 
   const deleteKanyeSongs = async () => {
     let playlists;
@@ -91,6 +117,13 @@ const DeleteKanye = () => {
     });
   };
 
+  const updateTotalDeletesAndUsers = async (songDeletes) => {
+    const updates = {};
+    updates[`totals/deletes`] = firebase.database.ServerValue.increment(songDeletes);
+    updates[`totals/users`] = firebase.database.ServerValue.increment(1);
+    firebase.database().ref().update(updates);
+  }
+
   const handleOnSubmit = async (evt) => {
     document.getElementById('value').style.visibility = 'visible';
     document.getElementById('clickHereInstructions').innerHTML = "Kayne songs deleted";
@@ -99,6 +132,8 @@ const DeleteKanye = () => {
     try {
       await deleteKanyeSongs();
       setComplete(true);
+      const songDeletes = parseInt(document.getElementById('value').innerHTML)
+      updateTotalDeletesAndUsers(songDeletes)
     } catch (err) {
       console.error(err);
     }
