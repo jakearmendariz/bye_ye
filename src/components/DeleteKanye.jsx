@@ -49,7 +49,7 @@ const DeleteKanye = () => {
       });
       playlistOffset += 10;
     } while (playlists.items.length == 10);
-
+    setComplete(true);
     return counter;
   };
 
@@ -80,8 +80,11 @@ const DeleteKanye = () => {
       });
       songOffset += 100;
     }
-    const currentCount = parseInt(document.getElementById('value').innerHTML);
-    document.getElementById('value').innerHTML = '' + (currentCount + counter);
+    if (counter > 0) {
+      incDeletes(counter)
+      const currentCount = parseInt(document.getElementById('value').innerHTML);
+      document.getElementById('value').innerHTML = '' + (currentCount + counter);
+    }
     return counter;
   };
 
@@ -117,6 +120,12 @@ const DeleteKanye = () => {
     });
   };
 
+  const incDeletes = async (songDeletes) => {
+    const updates = {};
+    updates[`totals/deletes`] = firebase.database.ServerValue.increment(songDeletes);
+    firebase.database().ref().update(updates);
+  }
+
   const updateTotalDeletesAndUsers = async (songDeletes) => {
     const updates = {};
     updates[`totals/deletes`] = firebase.database.ServerValue.increment(songDeletes);
@@ -130,10 +139,11 @@ const DeleteKanye = () => {
     evt.preventDefault();
 
     try {
-      await deleteKanyeSongs();
-      setComplete(true);
-      const songDeletes = parseInt(document.getElementById('value').innerHTML)
-      updateTotalDeletesAndUsers(songDeletes)
+      deleteKanyeSongs().then((fuckme) => {
+        // while (!isComplete) {console.log('yolobitches')}
+        const songDeletes = parseInt(document.getElementById('value').innerHTML)
+        updateTotalDeletesAndUsers(songDeletes);
+      });
     } catch (err) {
       console.error(err);
     }
