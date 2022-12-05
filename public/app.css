@@ -1,0 +1,17 @@
+body {
+  background-color: rgb(27, 27, 27);
+  font-family: Roboto;
+  text-align: center;
+  margin: 10%;
+  color: whitesmoke;
+}
+
+h1 {
+  font-size: 3em;
+  /* font-color: red; */
+}
+
+h3 {
+  font-size: 1.5em;
+  font-weight: 100;
+}

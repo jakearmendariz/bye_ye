@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { buildQueryString, generateState } from "../utils/spotify";
 
-// Environment variables from `.env` file.
 const {
   REACT_APP_SPOTIFY_CLIENT_ID,
   REACT_APP_SPOTIFY_REDIRECT_URI,
