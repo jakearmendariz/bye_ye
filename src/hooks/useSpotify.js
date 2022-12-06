@@ -29,6 +29,7 @@ export const SpotifyProvider = ({ children }) => {
 };
 
 export const useSpotify = () => {
+  console.log('spotifyContext', useContext(spotifyContext))
   return useContext(spotifyContext);
 };
 
@@ -40,11 +41,7 @@ const useProvideSpotify = () => {
 
   const history = useHistory();
 
-  const HEADERS = {
-    Authorization: `Bearer ${token}`,
-  };
-
-  const callEndpoint = async ({ path, method = 'GET', headers = HEADERS }) => {
+  const callEndpoint = async ({ path, method = 'GET' }) => {
     if (hasTokenExpired()) {
       invalidateToken();
 
@@ -53,7 +50,9 @@ const useProvideSpotify = () => {
 
     return await (
       await fetch(`${BASE_API_URL}${path}`, {
-        headers: HEADERS,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         method,
       })
     ).json();
@@ -245,6 +244,5 @@ const useProvideSpotify = () => {
     fetchCurrentUserInfo,
     callEndpoint,
     callEndpointWithBody,
-    HEADERS,
   };
 };

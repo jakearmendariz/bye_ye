@@ -10,61 +10,66 @@ import 'firebase/compat/auth';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import React, { useState } from 'react';
+import CountUp from 'react-countup';
 
 // import { initializeApp } from 'firebase/app';
 
 export default function App() {
   const { hasLoggedIn, hasRedirectedFromValidPopup, isLoading, login, user } =
     useSpotify();
-  const {
-    REACT_APP_API_KEY,
-    REACT_APP_authDomain,
-    REACT_APP_databaseURL,
-    REACT_APP_projectId,
-    REACT_APP_storageBucket,
-    REACT_APP_messagingSenderId,
-    REACT_APP_appId,
-    REACT_APP_measurementId
-  } = process.env;
-  const FIREBASE_CONFIG = {
-    apiKey: REACT_APP_API_KEY,
-    authDomain: REACT_APP_authDomain,
-    databaseUrl: REACT_APP_databaseURL,
-    projectId: REACT_APP_projectId,
-    storageBucket: REACT_APP_storageBucket,
-    messagingSenderId: REACT_APP_messagingSenderId,
-    appId: REACT_APP_appId,
-    measurementId: REACT_APP_measurementId
-  };
-  var app = firebase.initializeApp(FIREBASE_CONFIG);
-  // console.log(FIREBASE_CONFIG)
-  // const app = initializeApp(FIREBASE_CONFIG);
-  const getTotalDeletesAndUsers = async () => {
-    let deletes = 0;
-    let users = 0;
-    firebase
-      .database(app)
-      .ref()
-      .once('value')
-      .then(function (snapshot) {
-        deletes = snapshot.child('totals/deletes').val();
-        users = snapshot.child('totals/users').val();
-        setTotalDeletedSongs(deletes);
-        setTotalUsers(users);
-      });
 
-    return {
-      deletes: deletes,
-      users: users
-    };
-  };
+  const { getTotalDeletesAndUsers } = useFirebase();
 
   const [totalDeletedSongs, setTotalDeletedSongs] = React.useState(0);
   const [totalUsers, setTotalUsers] = React.useState(0);
-
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   useEffect(async () => {
-    await getTotalDeletesAndUsers();
+    const { deletes, users } = await getTotalDeletesAndUsers();
+    setTotalDeletedSongs(deletes);
+    setTotalUsers(users);
+    // document.getElementById('totalUsers').innerHTML = 0;
+    // document.getElementById('totalDeletedSongs').innerHTML = 0;
+    // console.log(deletes, users);
+    // for (let i = 0; i < users; i++) {
+    //   document.getElementById('totalUsers').innerHTML =
+    //     parseInt(document.getElementById('totalUsers').innerHTML) + 1;
+    //   document.getElementById('totalDeletedSongs').innerHTML =
+    //     parseInt(document.getElementById('totalDeletedSongs').innerHTML) + 1;
+    //   sleep(1000);
+    // }
+    // for (let i = users; i < deletes; i++) {
+    //   document.getElementById('totalDeletedSongs').innerHTML =
+    //     parseInt(document.getElementById('totalDeletedSongs').innerHTML) + 1;
+    // }
   });
+
+  const Analytics = () => {
+    return (
+      <>
+        <h3>
+          Number of participants <br></br>
+          <b style={{ fontSize: '1.5em' }} id="totalUsers">
+            <CountUp
+              start={0}
+              end={totalUsers}
+              delay={0}
+              duration={0.5}
+            ></CountUp>
+          </b>
+          <br></br> Total Kanye songs deleted <br></br>
+          <b style={{ fontSize: '1.5em' }} id="totalDeletedSongs">
+            <CountUp
+              start={0}
+              end={totalDeletedSongs}
+              delay={0}
+              duration={1}
+            ></CountUp>
+          </b>
+          <br></br>
+        </h3>
+      </>
+    );
+  };
 
   return (
     <div id="body">
@@ -79,31 +84,36 @@ export default function App() {
             <div>
               {hasLoggedIn ? (
                 <>
+                 <Analytics></Analytics>
                   <h3 id="clickHereInstructions">
                     Click here to remove <b>all</b> Kanye songs from your{' '}
-                    <b>all</b> your spotify playlists.
+                    <b>all</b> your spotify playlists.<br></br>
+                    <span id="value" style={{ visibility: 'hidden', margin: '0px' }}>0</span>
                   </h3>
-                  <h3 id="value" style={{ visibility: 'hidden' }}>
+                  {/* <h3 id="value" style={{ visibility: 'hidden', margin: '0px' }}>
                     0
-                  </h3>
+                  </h3> */}
                   <DeleteKanye />
                 </>
               ) : (
-                <>
-                  <h3>
-                    Heard about all the antisemetic shit Kanye West has been
-                    saying, but your spotify is still littered with his music?
-                    <br></br>
-                    <br></br>
-                    Do the right thing, delete all of your Kanye songs!<br></br>
-                  </h3>
-                  <Button variant="contained" color="primary" onClick={login}>
-                    Login
+                <div>
+                  <h3>Upset with Kanye's rampant antisemitisim?</h3>
+                  <Analytics></Analytics>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{ backgroundColor: '#1DB954' }}
+                    onClick={login}
+                  >
+                    Login to Spotify
                   </Button>
-                </>
+                </div>
               )}
-              Join the {totalUsers} users who have collectively deleted{' '}
-              {totalDeletedSongs} Kanye songs off their playlists
+              {/* <h3>
+                Total Users: <span id="totalUsers">{0}</span>
+                <br></br>Total Songs Deleted:{' '}
+                <span id="totalDeletedSongs">{0}</span>
+              </h3> */}
             </div>
           </Route>
 
