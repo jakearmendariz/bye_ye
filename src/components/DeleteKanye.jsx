@@ -73,12 +73,14 @@ const DeleteKanye = () => {
             kanyeCounter += 1;
           }
         }
-        if (songsToDelete.length > 0) {
-          fetchDeleteSong({ playlist_id: playlist.id, songsToDelete });
-          songsToDelete = [];
-        }
       });
       songOffset += 100;
+    }
+    if (songsToDelete.length > 0) {
+      for (let i = 0; i < songsToDelete.length; i += 85) {
+        fetchDeleteSong({ playlist_id: playlist.id, songsToDelete: songsToDelete.slice(i, i+85) });
+      }
+      songsToDelete = [];
     }
     if (counter > 0) {
       incDeletes(counter)
