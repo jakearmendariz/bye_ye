@@ -36,8 +36,10 @@ const DeleteKanye = () => {
   var app = firebase.initializeApp(FIREBASE_CONFIG);
 
   const deleteKanyeSongs = async () => {
-    let playlists;
     let counter = 0;
+
+    //Delete all Kanye songs off playlists
+    let playlists;
     let playlistOffset = 0;
     do {
       playlists = await fetchPlaylist(playlistOffset);
@@ -50,6 +52,18 @@ const DeleteKanye = () => {
       });
       playlistOffset += 10;
     } while (playlists.items.length == 10);
+
+    //Delete all Kanye songs from liked songs
+    let savedTracks;
+    let savedTracksOffset = 50;
+    do {
+      savedTracks = await fetchSavedTracks(savedTracksOffset);
+      console.log(savedTracks);
+      savedTracksOffset += 50;
+    } while (savedTracks.items.length == 50);
+
+    //Remove all Kanye albums from liked albums
+
     setComplete(true);
     return counter;
   };
@@ -120,6 +134,12 @@ const DeleteKanye = () => {
   const fetchPlaylist = async (offset) => {
     return await callEndpoint({
       path: `/me/playlists?limit=10&offset=${offset}`
+    });
+  };
+
+  const fetchSavedTracks = async (offset) => {
+    return await callEndpoint({
+      path: `/me/tracks?limit=50&offset=${offset}`
     });
   };
 
