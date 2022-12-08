@@ -72,7 +72,7 @@ const useProvideSpotify = () => {
         method,
         body,
       })
-    ).json();
+    );
   }
 
   const fetchCurrentUserInfo = async () => {

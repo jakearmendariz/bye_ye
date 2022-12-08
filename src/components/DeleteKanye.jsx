@@ -55,12 +55,28 @@ const DeleteKanye = () => {
 
     //Delete all Kanye songs from liked songs
     let savedTracks;
-    let savedTracksOffset = 50;
+    let savedTracksOffset = 0;
+    let tracksIDsToDelete = [];
     do {
       savedTracks = await fetchSavedTracks(savedTracksOffset);
-      console.log(savedTracks);
+      savedTracks.items.forEach(async (song) => {
+        if(song.track.artists.some(isKanye)){
+          console.log('kanye song detected in linked songs', song.track);
+          tracksIDsToDelete.push(song.track.id);
+        }
+      });
       savedTracksOffset += 50;
     } while (savedTracks.items.length == 50);
+
+    counter += tracksIDsToDelete.length;
+    let deleteTracksStart = 0;
+    let deleteTracksOffset = 50;
+    do {
+      let currDeletes = tracksIDsToDelete.slice(deleteTracksStart, deleteTracksStart+deleteTracksOffset);
+      await deleteSavedTracks(currDeletes);
+      deleteTracksStart += currDeletes.length;
+    } while (deleteTracksStart < tracksIDsToDelete.length);
+    document.getElementById('value').innerHTML = '' + counter;
 
     //Remove all Kanye albums from liked albums
 
@@ -105,6 +121,15 @@ const DeleteKanye = () => {
     return counter;
   };
 
+  const deleteSavedTracks = async (tracks) => {
+    // const body = { ids: tracks };
+    await callEndpointWithBody({
+      path: `/me/tracks`,
+      method: 'DELETE',
+      body: JSON.stringify(tracks)
+    });
+  };
+
   const isKanye = (artist) => {
     return artist.name == 'Kanye West';
   };
@@ -117,7 +142,7 @@ const DeleteKanye = () => {
 
   const fetchDeleteSong = async ({ playlist_id, songsToDelete }) => {
     const body = { tracks: songsToDelete };
-    return await callEndpointWithBody({
+    await callEndpointWithBody({
       path: `/playlists/${playlist_id}/tracks`,
       method: 'DELETE',
       body: JSON.stringify(body)
