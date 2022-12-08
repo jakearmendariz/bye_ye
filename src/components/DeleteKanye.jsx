@@ -163,7 +163,7 @@ const DeleteKanye = () => {
               onClick={handleOnSubmit}
               color="error"
               variant="contained"
-              style={{ width: 100, height: 60 }}
+              id="formButton"
             >
               Delete!
             </Button>

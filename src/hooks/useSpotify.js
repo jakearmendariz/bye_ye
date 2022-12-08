@@ -29,7 +29,6 @@ export const SpotifyProvider = ({ children }) => {
 };
 
 export const useSpotify = () => {
-  console.log('spotifyContext', useContext(spotifyContext))
   return useContext(spotifyContext);
 };
 
@@ -46,6 +45,7 @@ const useProvideSpotify = () => {
       invalidateToken();
 
       throw new Error("Token has expired.");
+      logout();
     }
 
     return await (
@@ -73,10 +73,6 @@ const useProvideSpotify = () => {
         body,
       })
     ).json();
-  }
-
-  const fetchSongsFromPlaylist = async ({ playlist_id }) => {
-    return await callEndpoint({ path: `/playlists/${playlist_id}/tracks`})
   }
 
   const fetchCurrentUserInfo = async () => {
@@ -116,7 +112,6 @@ const useProvideSpotify = () => {
       window.localStorage.setItem(LS_KEYS.ACCESS_TOKEN, accessToken);
       window.localStorage.setItem(LS_KEYS.EXP_TIMESTAMP, expTimestamp);
       window.localStorage.setItem(LS_KEYS.TOKEN_TYPE, tokenType);
-
       window.opener.spotifyAuthCallback(accessToken, expTimestamp);
     } catch (err) {
       console.error(err);

@@ -27,20 +27,6 @@ export default function App() {
     const { deletes, users } = await getTotalDeletesAndUsers();
     setTotalDeletedSongs(deletes);
     setTotalUsers(users);
-    // document.getElementById('totalUsers').innerHTML = 0;
-    // document.getElementById('totalDeletedSongs').innerHTML = 0;
-    // console.log(deletes, users);
-    // for (let i = 0; i < users; i++) {
-    //   document.getElementById('totalUsers').innerHTML =
-    //     parseInt(document.getElementById('totalUsers').innerHTML) + 1;
-    //   document.getElementById('totalDeletedSongs').innerHTML =
-    //     parseInt(document.getElementById('totalDeletedSongs').innerHTML) + 1;
-    //   sleep(1000);
-    // }
-    // for (let i = users; i < deletes; i++) {
-    //   document.getElementById('totalDeletedSongs').innerHTML =
-    //     parseInt(document.getElementById('totalDeletedSongs').innerHTML) + 1;
-    // }
   });
 
   const Analytics = () => {
@@ -48,7 +34,7 @@ export default function App() {
       <>
         <h3>
           Number of participants <br></br>
-          <b style={{ fontSize: '1.5em' }} id="totalUsers">
+          <b className="numbers" id="totalUsers">
             <CountUp
               start={0}
               end={totalUsers}
@@ -57,7 +43,7 @@ export default function App() {
             ></CountUp>
           </b>
           <br></br> Total Kanye songs deleted <br></br>
-          <b style={{ fontSize: '1.5em' }} id="totalDeletedSongs">
+          <b className="numbers" id="totalDeletedSongs">
             <CountUp
               start={0}
               end={totalDeletedSongs}
@@ -74,7 +60,7 @@ export default function App() {
   return (
     <div id="body">
       <h1>Delete Kanye!</h1>
-      <img style={{ width: '10em', height: '10em' }} src="xface.png"></img>
+      <img id="img" src="xface.png"></img>
 
       {isLoading ? (
         <p>Loading...</p>
@@ -88,11 +74,10 @@ export default function App() {
                   <h3 id="clickHereInstructions">
                     Click here to remove <b>all</b> Kanye songs from your{' '}
                     <b>all</b> your spotify playlists.<br></br>
-                    <span id="value" style={{ visibility: 'hidden', margin: '0px' }}>0</span>
                   </h3>
-                  {/* <h3 id="value" style={{ visibility: 'hidden', margin: '0px' }}>
-                    0
-                  </h3> */}
+                  <h3 className= "numbers">
+                  <b className= "numbers" id="value">0</b>
+                  </h3>
                   <DeleteKanye />
                 </>
               ) : (
@@ -102,8 +87,8 @@ export default function App() {
                   <Button
                     variant="contained"
                     color="primary"
-                    style={{ backgroundColor: '#1DB954' }}
                     onClick={login}
+                    id="spotifyButton"
                   >
                     Login to Spotify
                   </Button>
@@ -118,12 +103,12 @@ export default function App() {
           </Route>
 
           <Route path="/callback">
-            {hasLoggedIn ? (
+          {hasLoggedIn ? (
               <Redirect to="/dashboard" />
             ) : hasRedirectedFromValidPopup ? (
               <SpotifyRedirect />
             ) : (
-              <Redirect to="/" />
+              <SpotifyRedirect />
             )}
           </Route>
 
@@ -132,7 +117,7 @@ export default function App() {
               {hasLoggedIn ? (
                 <div>Dashboard: {JSON.stringify(user)}</div>
               ) : (
-                <Redirect to="/" />
+                 <SpotifyRedirect />
               )}
             </Route>
             <Route path="/bye">

@@ -38,7 +38,6 @@ export const FirebaseProvider = ({ children }) => {
 };
 
 export const useFirebase = () => {
-  console.log('firebaseContext', useContext(firebaseContext))
   return useContext(firebaseContext);
 };
 
