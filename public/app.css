@@ -16,17 +16,14 @@ h3 {
   font-weight: 100;
 }
 
-b .numbers {
-  font-size: 2em;
+
+.numbers {
+  font-size: 1.5em;
+  font-weight: 400;
   /* visibility: hidden; */
   margin: 0px;
 }
 
-h3 .numbers {
-  font-size: 2em;
-  /* visibility: hidden; */
-  margin: 0px;
-}
 
 .img {
   width: 10em;
@@ -38,7 +35,7 @@ h3 .numbers {
   height: 10em;
 }
 
-.spotifyButton {
+#spotifyButton {
   background-color: #1db954;
 }
 

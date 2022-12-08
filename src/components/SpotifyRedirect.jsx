@@ -7,7 +7,7 @@ const SpotifyRedirect = () => {
   useEffect(() => {
     storeTokenAtRedirect();
   }, []);
-  return <h1>Redirecting...</h1>;
+  return <body><h1>Redirecting...</h1></body>;
 };
 
 export default SpotifyRedirect;

@@ -59,7 +59,7 @@ export default function App() {
 
   return (
     <div id="body">
-      <h1>Delete Kanye!</h1>
+      <h1>Delete Kanye</h1>
       <img id="img" src="xface.png"></img>
 
       {isLoading ? (
@@ -70,28 +70,30 @@ export default function App() {
             <div>
               {hasLoggedIn ? (
                 <>
-                 <Analytics></Analytics>
+                 {/* <Analytics></Analytics> */}
                   <h3 id="clickHereInstructions">
                     Click here to remove <b>all</b> Kanye songs from your{' '}
                     <b>all</b> your spotify playlists.<br></br>
                   </h3>
                   <h3 className= "numbers">
-                  <b className= "numbers" id="value">0</b>
+                  <b className= "numbers" id="value" style={{display:"none"}}>0</b>
                   </h3>
                   <DeleteKanye />
                 </>
               ) : (
                 <div>
                   <h3>Upset with Kanye's rampant antisemitisim?</h3>
-                  <Analytics></Analytics>
+                  <h3>Login with Spotify to delete all your Kanye songs!</h3>
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={login}
                     id="spotifyButton"
                   >
-                    Login to Spotify
+                    Do the right thing
                   </Button>
+                  <Analytics></Analytics>
+                  
                 </div>
               )}
               {/* <h3>

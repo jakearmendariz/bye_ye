@@ -136,7 +136,7 @@ const DeleteKanye = () => {
   }
 
   const handleOnSubmit = async (evt) => {
-    document.getElementById('value').style.visibility = 'visible';
+    document.getElementById('value').style.display = 'inline';
     document.getElementById('clickHereInstructions').innerHTML = "Kayne songs deleted";
     evt.preventDefault();
 
